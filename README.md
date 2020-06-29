@@ -14,9 +14,9 @@ This code is written in python. The dependencies are:
 
 ## Mutual Information Estimation
 
-We evaluate the estimation ability of CLUB and other baselines under simulation setup. Samples from Gaussian and Cubic distributions are generated with the true MI values pre-known. Then we compare different MI estimators on estimating MI values based on the given samples. The code in this section is written with Pytorch. 
+We evaluate the estimation ability of CLUB and other baselines under the simulation setups. Samples from Gaussian and Cubic distributions are generated with the true MI values pre-known. Then we compare different MI estimators on estimating MI values based on the given samples. The code in this section is written with Pytorch. 
 
-The implementation of our CLUB estimator, along with other baselines ([NWJ](https://media.gradebuddy.com/documents/2949555/12a1c544-de73-4e01-9d24-2f7c347e9a20.pdf), [MINE](http://proceedings.mlr.press/v80/belghazi18a), [InfoNCE](https://arxiv.org/pdf/1807.03748.pdf), [VUB](https://arxiv.org/abs/1612.00410), [L1Out](https://arxiv.org/pdf/1905.06922.pdf)), is in `mi_estimators.py`. VUB and L1Out are implemented in variational froms proposed in our [paper](https://arxiv.org/abs/2006.12013).  Follow the steps in `simulation.ipynb` to demonstration the MI esimation performance of different methods.
+The implementation of our CLUB estimator, along with other baselines ([NWJ](https://media.gradebuddy.com/documents/2949555/12a1c544-de73-4e01-9d24-2f7c347e9a20.pdf), [MINE](http://proceedings.mlr.press/v80/belghazi18a), [InfoNCE](https://arxiv.org/pdf/1807.03748.pdf), [VUB](https://arxiv.org/abs/1612.00410), [L1Out](https://arxiv.org/pdf/1905.06922.pdf)), is in `mi_estimators.py`. VUB and L1Out are implemented in variational forms proposed in [our paper](https://arxiv.org/abs/2006.12013).  Follow the steps in `simulation.ipynb` to demonstrate the MI estimation performance of different methods.
 
 ## Mutual Information Minimization
 
