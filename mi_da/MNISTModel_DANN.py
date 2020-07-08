@@ -419,7 +419,7 @@ class MNISTModel_DANN(object):
         self.feature_extractor_d()        
         self.label_predictor()
         self.domain_predictor()
-        self.VUB()
+        self.club()
         # self.domain_test()
 
         # self.src_pred = tf.argmax(tf.slice(self.y_pred, [0, 0], [self.batch_size, -1]), axis=-1)
