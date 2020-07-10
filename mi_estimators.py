@@ -19,13 +19,13 @@ class CLUB(nn.Module):  # CLUB: Mutual Information Contrastive Learning Upper Bo
     def __init__(self, x_dim, y_dim, hidden_size):
         super(CLUB, self).__init__()
         # p_mu outputs mean of q(Y|X)
-        self.p_mu = nn.Sequential(nn.Linear(x_dim, hidden_size),
+        self.p_mu = nn.Sequential(nn.Linear(x_dim, hidden_size//2),
                                        nn.ReLU(),
-                                       nn.Linear(hidden_size, y_dim))
+                                       nn.Linear(hidden_size//2, y_dim))
         # p_logvar outputs log of variance of q(Y|X)
-        self.p_logvar = nn.Sequential(nn.Linear(x_dim, hidden_size),
+        self.p_logvar = nn.Sequential(nn.Linear(x_dim, hidden_size//2),
                                        nn.ReLU(),
-                                       nn.Linear(hidden_size, y_dim),
+                                       nn.Linear(hidden_size//2, y_dim),
                                        nn.Tanh())
 
     def get_mu_logvar(self, x_samples):
@@ -56,13 +56,13 @@ class CLUB(nn.Module):  # CLUB: Mutual Information Contrastive Learning Upper Bo
 class CLUBSample(nn.Module):  # Sampled version of the CLUB estimator
     def __init__(self, x_dim, y_dim, hidden_size):
         super(CLUBSample, self).__init__()
-        self.p_mu = nn.Sequential(nn.Linear(x_dim, hidden_size),
+        self.p_mu = nn.Sequential(nn.Linear(x_dim, hidden_size//2),
                                        nn.ReLU(),
-                                       nn.Linear(hidden_size, y_dim))
+                                       nn.Linear(hidden_size//2, y_dim))
 
-        self.p_logvar = nn.Sequential(nn.Linear(x_dim, hidden_size),
+        self.p_logvar = nn.Sequential(nn.Linear(x_dim, hidden_size//2),
                                        nn.ReLU(),
-                                       nn.Linear(hidden_size, y_dim),
+                                       nn.Linear(hidden_size//2, y_dim),
                                        nn.Tanh())
 
     def get_mu_logvar(self, x_samples):
@@ -92,7 +92,6 @@ class CLUBSample(nn.Module):  # Sampled version of the CLUB estimator
 class MINE(nn.Module):
     def __init__(self, x_dim, y_dim, hidden_size):
         super(MINE, self).__init__()
-        hidden_size = 2 *hidden_size
         self.T_func = nn.Sequential(nn.Linear(x_dim + y_dim, hidden_size),
                                     nn.ReLU(),
                                     nn.Linear(hidden_size, 1))
@@ -116,7 +115,6 @@ class MINE(nn.Module):
 class NWJ(nn.Module):   
     def __init__(self, x_dim, y_dim, hidden_size):
         super(NWJ, self).__init__()
-        hidden_size = 2 *hidden_size
         self.F_func = nn.Sequential(nn.Linear(x_dim + y_dim, hidden_size),
                                     nn.ReLU(),
                                     nn.Linear(hidden_size, 1))
@@ -138,7 +136,6 @@ class NWJ(nn.Module):
 class InfoNCE(nn.Module):
     def __init__(self, x_dim, y_dim, hidden_size):
         super(InfoNCE, self).__init__()
-        hidden_size = 2 *hidden_size
         self.F_func = nn.Sequential(nn.Linear(x_dim + y_dim, hidden_size),
                                     nn.ReLU(),
                                     nn.Linear(hidden_size, 1),
@@ -182,13 +179,13 @@ def log_sum_exp(value, dim=None, keepdim=False):
 class L1OutUB(nn.Module):  # naive upper bound
     def __init__(self, x_dim, y_dim, hidden_size):
         super(L1OutUB, self).__init__()
-        self.p_mu = nn.Sequential(nn.Linear(x_dim, hidden_size),
+        self.p_mu = nn.Sequential(nn.Linear(x_dim, hidden_size//2),
                                        nn.ReLU(),
-                                       nn.Linear(hidden_size, y_dim))
+                                       nn.Linear(hidden_size//2, y_dim))
 
-        self.p_logvar = nn.Sequential(nn.Linear(x_dim, hidden_size),
+        self.p_logvar = nn.Sequential(nn.Linear(x_dim, hidden_size//2),
                                        nn.ReLU(),
-                                       nn.Linear(hidden_size, y_dim),
+                                       nn.Linear(hidden_size//2, y_dim),
                                        nn.Tanh())
 
     def get_mu_logvar(self, x_samples):
@@ -221,13 +218,13 @@ class L1OutUB(nn.Module):  # naive upper bound
 class VarUB(nn.Module):  #    variational upper bound
     def __init__(self, x_dim, y_dim, hidden_size):
         super(VarUB, self).__init__()
-        self.p_mu = nn.Sequential(nn.Linear(x_dim, hidden_size),
+        self.p_mu = nn.Sequential(nn.Linear(x_dim, hidden_size//2),
                                        nn.ReLU(),
-                                       nn.Linear(hidden_size, y_dim))
+                                       nn.Linear(hidden_size//2, y_dim))
 
-        self.p_logvar = nn.Sequential(nn.Linear(x_dim, hidden_size),
+        self.p_logvar = nn.Sequential(nn.Linear(x_dim, hidden_size//2),
                                        nn.ReLU(),
-                                       nn.Linear(hidden_size, y_dim),
+                                       nn.Linear(hidden_size//2, y_dim),
                                        nn.Tanh())
 
     def get_mu_logvar(self, x_samples):
