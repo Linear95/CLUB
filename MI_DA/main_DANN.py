@@ -1,28 +1,42 @@
-import tensorflow as tf
-import numpy as np
-from sklearn.manifold import TSNE
-from MNISTModel_DANN import MNISTModel_DANN
-import utils
-import imageloader as dataloader
-import tensorflow.contrib.slim as slim
-import scipy.io
 import os
 import pdb
+import argparse
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+import numpy as np
+#from sklearn.manifold import TSNE
+#import scipy.io
+
+import tensorflow as tf
+import tensorflow.contrib.slim as slim
+
+from MNISTModel_DANN import MNISTModel_DANN
+import imageloader as dataloader
+import utils
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.25) 
 
+parser = argparse.ArgumentParser(description="Domain Adaptation Training")
+parser.add_argument("--data_path", type=str, default="/path/to/dataset/folder/", help="path to dataset folder")
+parser.add_argument("--save_path", type=str, default="/path/to/save/dir/", help="path to save experiment output")
+parser.add_argument("--source", type=str, default="mnist", help="specify source dataset")
+parser.add_argument("--target", type=str, default="svhn", help="specify target dataset")
+
+args = parser.parse_args()
+
+data_path = args.data_path
+save_path = args.save_path
 batch_size = 64
 num_steps = 15000
 epsilon = 0.5
 M = 0.1
 num_test_steps = 5000
 valid_steps = 100
-datasets = dataloader.load_datasets('/datasets/',{'mnist':1,'svhn':1})
+datasets = dataloader.load_datasets(data_path,{args.source:1,args.target:1})
 
 # datasets = dataloader.normalize_dataset(datasets)
-sources = {'mnist':1}
-targets = {'svhn':1}
+sources = {args.source:1}
+targets = {args.target:1}
 description = utils.description(sources, targets)
 source_train, source_valid, source_test, target_train, target_valid, target_test = dataloader.source_target(datasets, sources, targets, unify_source = True)
 
@@ -78,7 +92,8 @@ source_data_valid = np.concatenate([source_valid['images'], source_test['images'
 target_data_valid = np.concatenate([target_valid['images'], target_test['images']])
 source_label_valid = np.concatenate([source_valid['labels'], source_test['labels']])
 
-save_path = './Result/' + description + '/'
+#save_path = './Result/' + description + '/'
+save_path = os.path.join(save_path, description)
 if not os.path.exists(save_path):
     os.mkdir(save_path)
 

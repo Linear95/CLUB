@@ -3,7 +3,7 @@ import utils
 import pdb
 import math
 import tensorflow.contrib.layers as layers
-import keras.backend as K
+#import keras.backend as K
 
 def leaky_relu(x, a=0.1):
     return tf.maximum(x, a * x)

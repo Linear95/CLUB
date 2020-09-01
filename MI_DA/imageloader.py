@@ -2,12 +2,11 @@ import numpy as np
 import pickle
 from tensorflow.examples.tutorials.mnist import input_data
 import scipy.io
-import torchfile
 from utils import to_one_hot
 import pdb
 import cv2
 import os
-from scipy.misc import imsave
+#from scipy.misc import imsave
 
 def load_datasets(data_dir = './', sets={'mnist':1, 'svhn':1, 'mnistm':1, 'usps':1}):
     datasets = {}
