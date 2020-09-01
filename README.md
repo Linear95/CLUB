@@ -15,7 +15,7 @@ Follow the steps in `simulation.ipynb` to demonstrate the MI estimation performa
 
 ## Mutual Information Minimization
 
-We test the MI minimization performance of our CLUB estimator on two real-world tasks: Information Bottleneck (IB) and Domain Adaptation (DA). We provide the instructions to reproduce the results of IB and DA in the folder `MI_IB/` and `MI_DA/` respectively. 
+We test the MI minimization performance of our CLUB estimator on two real-world tasks: Information Bottleneck (IB) and Domain Adaptation (DA). We provide the instructions to reproduce the results of IB and DA in the folder [MI_IB](https://github.com/Linear95/CLUB/tree/master/MI_IB) and [MI_DA](https://github.com/Linear95/CLUB/tree/master/MI_DA) respectively. 
 
 ## Citation 
 Please cite our ICML 2020 paper if you found the code useful.
