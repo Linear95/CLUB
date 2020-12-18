@@ -9,7 +9,7 @@ class CLUB(nn.Module):  # CLUB: Mutual Information Contrastive Learning Upper Bo
     '''
         This class provides the CLUB estimation to I(X,Y)
         Method:
-            mi_est() :      provides the estimation with input samples  
+            forward() :      provides the estimation with input samples  
             loglikeli() :   provides the log-likelihood of the approximation q(Y|X) with input samples
         Arguments:
             x_dim, y_dim :         the dimensions of samples from X, Y respectively
@@ -19,6 +19,7 @@ class CLUB(nn.Module):  # CLUB: Mutual Information Contrastive Learning Upper Bo
     def __init__(self, x_dim, y_dim, hidden_size):
         super(CLUB, self).__init__()
         # p_mu outputs mean of q(Y|X)
+        #print("create CLUB with dim {}, {}, hiddensize {}".format(x_dim, y_dim, hidden_size))
         self.p_mu = nn.Sequential(nn.Linear(x_dim, hidden_size//2),
                                        nn.ReLU(),
                                        nn.Linear(hidden_size//2, y_dim))
@@ -33,7 +34,7 @@ class CLUB(nn.Module):  # CLUB: Mutual Information Contrastive Learning Upper Bo
         logvar = self.p_logvar(x_samples)
         return mu, logvar
     
-    def mi_est(self, x_samples, y_samples): 
+    def forward(self, x_samples, y_samples): 
         mu, logvar = self.get_mu_logvar(x_samples)
         
         # log of conditional probability of positive sample pairs
@@ -51,6 +52,8 @@ class CLUB(nn.Module):  # CLUB: Mutual Information Contrastive Learning Upper Bo
         mu, logvar = self.get_mu_logvar(x_samples)
         return (-(mu - y_samples)**2 /logvar.exp()-logvar).sum(dim=1).mean(dim=0)
     
+    def learning_loss(self, x_samples, y_samples):
+        return - self.loglikeli(x_samples, y_samples)
     
     
 class CLUBSample(nn.Module):  # Sampled version of the CLUB estimator
@@ -76,7 +79,7 @@ class CLUBSample(nn.Module):  # Sampled version of the CLUB estimator
         return (-(mu - y_samples)**2 /logvar.exp()-logvar).sum(dim=1).mean(dim=0)
     
 
-    def mi_est(self, x_samples, y_samples):
+    def forward(self, x_samples, y_samples):
         mu, logvar = self.get_mu_logvar(x_samples)
         
         sample_size = x_samples.shape[0]
@@ -88,6 +91,9 @@ class CLUBSample(nn.Module):  # Sampled version of the CLUB estimator
         upper_bound = (positive.sum(dim = -1) - negative.sum(dim = -1)).mean()
         return upper_bound/2.
 
+    def learning_loss(self, x_samples, y_samples):
+        return - self.loglikeli(x_samples, y_samples)
+
 
 class MINE(nn.Module):
     def __init__(self, x_dim, y_dim, hidden_size):
@@ -96,7 +102,7 @@ class MINE(nn.Module):
                                     nn.ReLU(),
                                     nn.Linear(hidden_size, 1))
     
-    def mi_est(self, x_samples, y_samples):  # samples have shape [sample_size, dim]
+    def forward(self, x_samples, y_samples):  # samples have shape [sample_size, dim]
         # shuffle and concatenate
         sample_size = y_samples.shape[0]
         random_index = torch.randint(sample_size, (sample_size,)).long()
@@ -110,6 +116,9 @@ class MINE(nn.Module):
 
         # compute the negative loss (maximise loss == minimise -loss)
         return lower_bound
+    
+    def learning_loss(self, x_samples, y_samples):
+        return -self.forward(x_samples, y_samples)
 
     
 class NWJ(nn.Module):   
@@ -119,7 +128,7 @@ class NWJ(nn.Module):
                                     nn.ReLU(),
                                     nn.Linear(hidden_size, 1))
                                     
-    def mi_est(self, x_samples, y_samples): 
+    def forward(self, x_samples, y_samples): 
         # shuffle and concatenate
         sample_size = y_samples.shape[0]
 
@@ -131,6 +140,10 @@ class NWJ(nn.Module):
 
         lower_bound = T0.mean() - (T1.logsumexp(dim = 1) - np.log(sample_size)).exp().mean() 
         return lower_bound
+    
+    def learning_loss(self, x_samples, y_samples):
+        return -self.forward(x_samples, y_samples)
+
 
     
 class InfoNCE(nn.Module):
@@ -141,7 +154,7 @@ class InfoNCE(nn.Module):
                                     nn.Linear(hidden_size, 1),
                                     nn.Softplus())
     
-    def mi_est(self, x_samples, y_samples):  # samples have shape [sample_size, dim]
+    def forward(self, x_samples, y_samples):  # samples have shape [sample_size, dim]
         # shuffle and concatenate
         sample_size = y_samples.shape[0]
 
@@ -153,6 +166,10 @@ class InfoNCE(nn.Module):
 
         lower_bound = T0.mean() - (T1.logsumexp(dim = 1).mean() - np.log(sample_size)) 
         return lower_bound
+
+    def learning_loss(self, x_samples, y_samples):
+        return -self.forward(x_samples, y_samples)
+
 
 
 def log_sum_exp(value, dim=None, keepdim=False):
@@ -193,7 +210,7 @@ class L1OutUB(nn.Module):  # naive upper bound
         logvar = self.p_logvar(x_samples)
         return mu, logvar
 
-    def mi_est(self, x_samples, y_samples): 
+    def forward(self, x_samples, y_samples): 
         batch_size = y_samples.shape[0]
         mu, logvar = self.get_mu_logvar(x_samples)
 
@@ -214,6 +231,9 @@ class L1OutUB(nn.Module):  # naive upper bound
         mu, logvar = self.get_mu_logvar(x_samples)
         return (-(mu - y_samples)**2 /logvar.exp()-logvar).sum(dim=1).mean(dim=0)
 
+    def learning_loss(self, x_samples, y_samples):
+        return - self.loglikeli(x_samples, y_samples)
+
     
 class VarUB(nn.Module):  #    variational upper bound
     def __init__(self, x_dim, y_dim, hidden_size):
@@ -232,12 +252,15 @@ class VarUB(nn.Module):  #    variational upper bound
         logvar = self.p_logvar(x_samples)
         return mu, logvar
             
-    def mi_est(self, x_samples, y_samples): #[nsample, 1]
+    def forward(self, x_samples, y_samples): #[nsample, 1]
         mu, logvar = self.get_mu_logvar(x_samples)
         return 1./2.*(mu**2 + logvar.exp() - 1. - logvar).mean()
         
     def loglikeli(self, x_samples, y_samples):
         mu, logvar = self.get_mu_logvar(x_samples)
         return (-(mu - y_samples)**2 /logvar.exp()-logvar).sum(dim=1).mean(dim=0)
+
+    def learning_loss(self, x_samples, y_samples):
+        return - self.loglikeli(x_samples, y_samples)
 
     
