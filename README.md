@@ -23,10 +23,12 @@ Besides, we provide another toy example in `mi_minimization.ipynb` to visualize 
 Please cite our ICML 2020 paper if you found the code useful.
 
 ```latex
-@article{cheng2020club,
-  title={CLUB: A Contrastive Log-ratio Upper Bound of Mutual Information},
+@inproceedings{cheng2020club,
+  title={Club: A contrastive log-ratio upper bound of mutual information},
   author={Cheng, Pengyu and Hao, Weituo and Dai, Shuyang and Liu, Jiachang and Gan, Zhe and Carin, Lawrence},
-  journal={arXiv preprint arXiv:2006.12013},
-  year={2020}
+  booktitle={International conference on machine learning},
+  pages={1779--1788},
+  year={2020},
+  organization={PMLR}
 }
 ```
