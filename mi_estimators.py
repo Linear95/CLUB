@@ -30,13 +30,13 @@ class CLUBForCategorical(nn.Module): # Update 04/27/2022
         inputs : shape [batch_size, input_dim], a batch of embeddings
         labels : shape [batch_size], a batch of label index
         '''
-        logits = self.variational_net(inputs)  #[n_sample, y_dim]
+        logits = self.variational_net(inputs)  #[sample_size, label_num]
         
         # log of conditional probability of positive sample pairs
         #positive = - nn.functional.cross_entropy(logits, labels, reduction='none')    
         sample_size, label_num = logits.shape
         
-        logits_extend = logits.unsqueeze(1).repeat(1, sample_size, 1)  # shape [sample_size, sample_size, dim]
+        logits_extend = logits.unsqueeze(1).repeat(1, sample_size, 1)  # shape [sample_size, sample_size, label_num]
         labels_extend = labels.unsqueeze(0).repeat(sample_size, 1)     # shape [sample_size, sample_size]
 
         # log of conditional probability of negative sample pairs
